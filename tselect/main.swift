@@ -9,13 +9,6 @@ import Foundation
 import AppKit
 import ArgumentParser
 
-extension String {
-    func trimPrefix(_ prefix: String) -> String {
-        guard self.hasPrefix(prefix) else { return self}
-        return String(self.dropFirst(prefix.count))
-    }
-}
-
 struct Directory {
     static func CurrentWorkingDirectory()-> String {
         return  FileManager.default.currentDirectoryPath
@@ -24,6 +17,7 @@ struct Directory {
 
 struct Path {
     static let seperator = "/"
+    static let home = "~"
     static let relativePrefix = "./"
     let fm = FileManager.default
     var path: String
@@ -36,7 +30,7 @@ struct Path {
     
     
     var isAbsolute: Bool {
-        return path.hasPrefix(Path.seperator)
+        return path.hasPrefix(Path.seperator) || path.hasPrefix(Path.home)
     }
     
     var isRelative: Bool {
@@ -69,10 +63,10 @@ for file in target.files {
     if path.exists {
         let url = NSURL(fileURLWithPath: path.absPath)
         // standardizing path: transform ../.. to the right path
-        guard let standardizedPaht = url.standardizingPath else {
+        guard let standardizedPath = url.standardizingPath else {
             continue
         }
-        urls.append(standardizedPaht)
+        urls.append(standardizedPath)
     }
 }
 
